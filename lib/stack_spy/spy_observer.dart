@@ -12,13 +12,17 @@ import 'package:d_stack/observer/d_node_observer.dart';
 import 'package:d_stack_spy/stack_spy/spy_screenshot.dart';
 import 'package:d_stack_spy/stack_spy/spy.dart';
 import 'package:flutter/material.dart';
+import 'dart:convert' as convert;
 
 // spy节点监听
 class DSpyNodeObserver extends DNodeObserver {
 
   static final DSpyNodeObserver _singleton = DSpyNodeObserver._internal();
+
   static DSpyNodeObserver get instance => _singleton;
+
   factory DSpyNodeObserver() => _singleton;
+
   DSpyNodeObserver._internal() {
     DStackSpy();
   }
@@ -37,7 +41,12 @@ class DSpyNodeObserver extends DNodeObserver {
   String firstNodeString() {
     if (_nodes.isNotEmpty) {
       Map firstNode = _nodes.removeAt(0);
-      return firstNode.toString();
+      Map messageMap = {};
+      messageMap['socketClient'] = 'app';
+      messageMap['messageType'] = 'node';
+      messageMap['data'] = firstNode;
+      String messageStr = convert.jsonEncode(messageMap);
+      return messageStr;
     } else {
       return null;
     }
@@ -54,8 +63,11 @@ class DSpyNodeObserver extends DNodeObserver {
 // 路由监听
 class DSpyNavigatorObserver extends NavigatorObserver {
 
-  static final DSpyNavigatorObserver _singleton = DSpyNavigatorObserver._internal();
+  static final DSpyNavigatorObserver _singleton = DSpyNavigatorObserver
+      ._internal();
+
   factory DSpyNavigatorObserver() => _singleton;
+
   static DSpyNavigatorObserver get instance => _singleton;
 
   DSpyNavigatorObserver._internal() {
