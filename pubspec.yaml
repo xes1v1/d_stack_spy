@@ -12,6 +12,9 @@ dependencies:
   flutter:
     sdk: flutter
 
+  d_stack:
+    path: ../d_stack/
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

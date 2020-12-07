@@ -8,7 +8,7 @@
 
 import 'dart:async';
 import 'package:flutter/services.dart';
-import 'dart:io';
+
 
 const String SpySentNodeToFlutter = 'spySentNodeToFlutter';
 
@@ -31,17 +31,4 @@ class DChannel {
   Future invokeMethod<T>(String method, [dynamic arguments]) async {
     return _methodChannel.invokeMethod(method, arguments);
   }
-}
-
-Future spySocket() async {
-  // Dart client
-  // ws://10.29.13.38:4041/ws
-  WebSocket socket = await WebSocket.connect('ws://10.29.13.38:4041/ws');
-  socket.listen((event) {
-    print('event $event');
-  });
-  var count = 0;
-  Timer.periodic(const Duration(seconds: 1), (Timer countDownTimer) {
-    socket.add('${count++}');
-  });
 }

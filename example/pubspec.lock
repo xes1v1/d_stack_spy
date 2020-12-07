@@ -50,6 +50,13 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "1.0.0"
+  d_stack:
+    dependency: transitive
+    description:
+      path: "../../d_stack"
+      relative: true
+    source: path
+    version: "1.2.8+4"
   d_stack_spy:
     dependency: "direct main"
     description:

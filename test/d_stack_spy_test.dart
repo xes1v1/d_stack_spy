@@ -1,6 +1,6 @@
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:d_stack_spy/d_stack_spy.dart';
+// import 'package:d_stack_spy/d_stack_spy.dart';
 
 void main() {
   const MethodChannel channel = MethodChannel('d_stack_spy');
@@ -17,7 +17,7 @@ void main() {
     channel.setMockMethodCallHandler(null);
   });
 
-  test('getPlatformVersion', () async {
-    expect(await DStackSpy.platformVersion, '42');
-  });
+  // test('getPlatformVersion', () async {
+  //   expect(await DStackSpy.platformVersion, '42');
+  // });
 }

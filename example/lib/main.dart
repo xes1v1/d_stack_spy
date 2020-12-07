@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'dart:async';
 
 import 'package:flutter/services.dart';
-import 'package:d_stack_spy/d_stack_spy.dart';
+import 'package:d_stack_spy/stack_spy/spy.dart';
 
 void main() {
   runApp(MyApp());
