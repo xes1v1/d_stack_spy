@@ -19,6 +19,7 @@ class DStackSpy {
   factory DStackSpy() => _singleton;
   static DStackSpy get instance => _singleton;
 
+  // native截图，准备废弃，如果后期优化成flutter截图在使用
   GlobalKey get boundaryKey => _boundaryKey;
   static GlobalKey _boundaryKey = GlobalKey();
 

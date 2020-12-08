@@ -7,10 +7,11 @@
  */
 
 import 'dart:async';
+import 'package:d_stack_spy/d_stack_spy.dart';
 import 'package:flutter/services.dart';
 
-
-const String SpySentNodeToFlutter = 'spySentNodeToFlutter';
+const String SpySendScreenShotActionToNative = 'spySendScreenShotActionToNative';
+const String SpyReceiveScreenShotFromNative = 'spyReceiveScreenShotFromNative';
 
 class DChannel {
   MethodChannel _methodChannel;
@@ -20,12 +21,17 @@ class DChannel {
     _methodChannel.setMethodCallHandler((MethodCall call) {
       // 处理Native发过来的消息
       print(
-          'setMethodCallHandler method ${call.method}, arguments ${call.arguments}');
-      if (SpySentNodeToFlutter == call.method) {
-        print('arguments ${call.arguments}');
+          'setMethodCallHandler method ${call.method}');
+      if (SpyReceiveScreenShotFromNative == call.method) {
+        // 接受到截图信息发给socket处理
+        DSpyNodeObserver.instance.addScreenshotNode(call.arguments);
       }
       return Future.value();
     });
+  }
+
+  void sendScreenShotActionToNative(Map action) {
+    invokeMethod(SpySendScreenShotActionToNative, action);
   }
 
   Future invokeMethod<T>(String method, [dynamic arguments]) async {

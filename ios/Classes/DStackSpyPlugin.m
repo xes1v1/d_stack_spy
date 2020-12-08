@@ -1,8 +1,10 @@
 #import "DStackSpyPlugin.h"
+#import "DStackSpyPlugin+Capture.h"
 
 typedef NSString *DStackSpyMethodChannelName;
 DStackSpyMethodChannelName const DStackSpyPlatformVersion = @"getPlatformVersion";
-DStackSpyMethodChannelName const DStackSpySendNodeToFlutter = @"spySentNodeToFlutter";
+DStackSpyMethodChannelName const  DStackSpySendScreenShotActionToNative = @"spySendScreenShotActionToNative";
+DStackSpyMethodChannelName const  DStackSpyReceiveScreenShotFromNative = @"spyReceiveScreenShotFromNative";
 
 @interface DStackSpyPlugin ()
 @property (nonatomic, strong) FlutterMethodChannel *methodChannel;
@@ -22,15 +24,27 @@ DStackSpyMethodChannelName const DStackSpySendNodeToFlutter = @"spySentNodeToFlu
     if ([DStackSpyPlatformVersion isEqualToString:call.method]) {
       NSString *platform = [@"iOS " stringByAppendingString:[[UIDevice currentDevice] systemVersion]];
       result(platform);
+  } if ([DStackSpySendScreenShotActionToNative isEqualToString:call.method]) {
+      // 去截图
+      
+      NSDictionary *argu = call.arguments;
+      NSString *base64 = [self base64WithScreenshot];
+      if (!base64) {
+          return;
+      }
+      NSDictionary *dict = @{@"target": argu[@"target"],
+                             @"imageData": [@"data:image/png;base64," stringByAppendingString:base64]
+                            };
+      [self sendScreenshotToFlutter:dict];
   } else {
     result(FlutterMethodNotImplemented);
   }
 }
 
-- (void)sentNodeToFlutter:(NSString *)node
+- (void)sendScreenshotToFlutter:(NSDictionary *)screenshot
 {
-    NSLog(@"sentNodeToFlutter node %@", node);
-    [self invokeMethod:DStackSpySendNodeToFlutter arguments:node result:nil];
+    NSLog(@"sendScreenshotToFlutter base64");
+    [self invokeMethod:DStackSpyReceiveScreenShotFromNative arguments:screenshot result:nil];
 }
 
 - (void)invokeMethod:(NSString*)method
