@@ -24,19 +24,21 @@ class DSpyNodeObserver extends DNodeObserver {
 
   DSpyNodeObserver._internal() {
     DStackSpy();
-    Map node = {
-      // stack发送给NodeObserver的数据
-      'action': 'push',
-      'pageType': 'Flutter', // Flutter、Native
-      'target': '/', //页面路由
-      'params': {},
-      'isFlutterHomePage': false, // true false
-      'boundary': false, // true false
-      'isRootPage': true, // true false
-      'animated': false, // true false
-      'identifier': '' // 页面唯一id
-    };
-    this.operationNode(node);
+    if (Platform.isIOS) {
+      Map node = {
+        // stack发送给NodeObserver的数据
+        'action': 'push',
+        'pageType': 'Flutter', // Flutter、Native
+        'target': '/', //页面路由
+        'params': {},
+        'isFlutterHomePage': false, // true false
+        'boundary': false, // true false
+        'isRootPage': true, // true false
+        'animated': false, // true false
+        'identifier': '' // 页面唯一id
+      };
+      this.operationNode(node);
+    }
   }
 
   // 待发送节点队列
