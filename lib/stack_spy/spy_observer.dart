@@ -15,33 +15,28 @@ import 'dart:convert' as convert;
 
 // spy节点监听
 class DSpyNodeObserver extends DNodeObserver {
+
+  int milliseconds = 1000;
+
   static final DSpyNodeObserver _singleton = DSpyNodeObserver._internal();
   static DSpyNodeObserver get instance => _singleton;
   factory DSpyNodeObserver() => _singleton;
 
   DSpyNodeObserver._internal() {
     DStackSpy();
-    // iOS侧根节点发送的时候，engine还未启动，节点监听无法收到
-    // 为了和Android保持一致，手动添加根节点
-    if (Platform.isIOS) {
-      Map node = {
-        'socketClient': 'app',
-        'messageType': 'node', // node、screenshot 消息类型
-        'data': {
-          // stack发送给NodeObserver的数据
-          'action': 'push',
-          'pageType': 'unknown', // Flutter、Native
-          'target': '/', //页面路由
-          'params': {},
-          'isFlutterHomePage': false, // true false
-          'boundary': false, // true false
-          'isRootPage': true, // true false
-          'animated': false, // true false
-          'identifier': '' // 页面唯一id
-        }
-      };
-      this.operationNode(node);
-    }
+    Map node = {
+      // stack发送给NodeObserver的数据
+      'action': 'push',
+      'pageType': 'Flutter', // Flutter、Native
+      'target': '/', //页面路由
+      'params': {},
+      'isFlutterHomePage': false, // true false
+      'boundary': false, // true false
+      'isRootPage': true, // true false
+      'animated': false, // true false
+      'identifier': '' // 页面唯一id
+    };
+    this.operationNode(node);
   }
 
   // 待发送节点队列
@@ -52,9 +47,14 @@ class DSpyNodeObserver extends DNodeObserver {
     print('addStackNode $node');
     Map stackNode = {};
     stackNode['socketClient'] = 'app';
-    stackNode['messageType'] = 'node';
+    stackNode['messageType'] = 'node'; // node、screenshot 消息类型
     stackNode['data'] = node;
     _messageQueue.add(stackNode);
+
+    Future.delayed(Duration(milliseconds: milliseconds), () {
+      DStackSpy.instance.channel
+          .sendScreenShotActionToNative({'target': node['target']});
+    });
   }
 
   // 队列中添加截图数据
@@ -85,7 +85,10 @@ class DSpyNodeObserver extends DNodeObserver {
   }
 }
 
-// 路由监听
+
+
+
+// 路由监听 准备废弃
 class DSpyNavigatorObserver extends NavigatorObserver {
   static final DSpyNavigatorObserver _singleton =
       DSpyNavigatorObserver._internal();
@@ -101,15 +104,25 @@ class DSpyNavigatorObserver extends NavigatorObserver {
   @override
   void didPush(Route route, Route previousRoute) {
     super.didPush(route, previousRoute);
-    print('spy didPush ${route.settings.name}');
+    print('spy didPush ${route.settings.name}, previousRoute ${previousRoute?.settings?.name}');
     // SpyScreenshot.readImage64(route.settings.name);
+
+    // Future.delayed(Duration(milliseconds: 1000), () {
+    //   DStackSpy.instance.channel
+    //       .sendScreenShotActionToNative({'target': route.settings.name});
+    // });
   }
 
   @override
   void didReplace({Route newRoute, Route oldRoute}) {
     super.didReplace(newRoute: newRoute, oldRoute: oldRoute);
-    print('spy didReplace ${newRoute.settings.name}');
+    print('spy didReplace ${newRoute.settings.name} oldRoute ${oldRoute?.settings?.name}');
     // SpyScreenshot.readImage64(newRoute.settings.name);
+
+    // Future.delayed(Duration(milliseconds: 1000), () {
+    //   DStackSpy.instance.channel
+    //       .sendScreenShotActionToNative({'target': newRoute.settings.name});
+    // });
   }
 
   @override
