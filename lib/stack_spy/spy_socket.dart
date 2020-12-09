@@ -27,10 +27,10 @@ class SpySocket {
     Future.delayed(Duration(milliseconds: 3000), () {
 
       Timer.periodic(Duration(milliseconds: 300), (timer) {
-        var sentStr =  DSpyNodeObserver.instance.firstNodeString();
+        var sentStr =  DSpyNodeObserver().firstNodeString();
         if (sentStr != null) {
           print('sentSocket');
-          sentNodeToServer(sentStr);
+          // sentNodeToServer(sentStr);
         }
       });
 

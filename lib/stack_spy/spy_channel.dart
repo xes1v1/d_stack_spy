@@ -24,7 +24,7 @@ class DChannel {
           'setMethodCallHandler method ${call.method}');
       if (SpyReceiveScreenShotFromNative == call.method) {
         // 接受到截图信息发给socket处理
-        DSpyNodeObserver.instance.addScreenshotNode(call.arguments);
+        DSpyNodeObserver().addScreenshotNode(call.arguments);
       }
       return Future.value();
     });

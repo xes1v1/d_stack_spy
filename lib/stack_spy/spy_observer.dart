@@ -16,13 +16,18 @@ import 'dart:convert' as convert;
 // spy节点监听
 class DSpyNodeObserver extends DNodeObserver {
 
-  int milliseconds = 1000;
+  int _milliseconds;
+  static DSpyNodeObserver _observer;
+  factory DSpyNodeObserver({int milliseconds = 1000}) {
+    if (_observer == null) {
+      _observer._milliseconds = milliseconds;
+      _observer = DSpyNodeObserver._internal(milliseconds);
+    }
+    return _observer;
+  }
 
-  static final DSpyNodeObserver _singleton = DSpyNodeObserver._internal();
-  static DSpyNodeObserver get instance => _singleton;
-  factory DSpyNodeObserver() => _singleton;
-
-  DSpyNodeObserver._internal() {
+  DSpyNodeObserver._internal(int milliseconds) {
+    print('milliseconds= $milliseconds');
     DStackSpy();
     if (Platform.isIOS) {
       Map node = {
@@ -53,10 +58,10 @@ class DSpyNodeObserver extends DNodeObserver {
     stackNode['data'] = node;
     _messageQueue.add(stackNode);
 
-    Future.delayed(Duration(milliseconds: milliseconds), () {
-      DStackSpy.instance.channel
-          .sendScreenShotActionToNative({'target': node['target']});
-    });
+    // Future.delayed(Duration(milliseconds: _milliseconds), () {
+    //   DStackSpy.instance.channel
+    //       .sendScreenShotActionToNative({'target': node['target']});
+    // });
   }
 
   // 队列中添加截图数据
