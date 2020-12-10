@@ -31,7 +31,7 @@ class SpySocket {
         var sentStr =  DSpyNodeObserver().firstNodeString();
         if (sentStr != null) {
           print('sentSocket');
-          // sentNodeToServer(sentStr);
+          sentNodeToServer(sentStr);
         }
       });
 
