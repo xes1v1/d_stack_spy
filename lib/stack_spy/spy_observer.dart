@@ -6,11 +6,8 @@
  * target: 监听NavigatorObserver
  */
 
-import 'dart:io';
-
 import 'package:d_stack/observer/d_node_observer.dart';
 import 'package:d_stack_spy/stack_spy/spy.dart';
-import 'package:flutter/material.dart';
 import 'dart:convert' as convert;
 
 // spy节点监听
@@ -30,22 +27,23 @@ class DSpyNodeObserver extends DNodeObserver {
 
   DSpyNodeObserver._internal() {
     print('milliseconds= $milliseconds');
+    // 初始化DStackSpy
     DStackSpy();
-    if (Platform.isIOS) {
-      Map node = {
-        // stack发送给NodeObserver的数据
-        'action': 'push',
-        'pageType': 'Flutter', // Flutter、Native
-        'target': '/', //页面路由
-        'params': {},
-        'isFlutterHomePage': false, // true false
-        'boundary': false, // true false
-        'isRootPage': true, // true false
-        'animated': false, // true false
-        'identifier': '' // 页面唯一id
-      };
-      this.operationNode(node);
-    }
+    // 将根节点主动加到队列中
+    // 因为native发送根节点可能在engine启动之前，这时候DNodeObserver队列收不到消息
+    Map node = {
+      // stack发送给NodeObserver的数据
+      'action': 'push',
+      'pageType': 'Flutter', // Flutter、Native
+      'target': '/', //页面路由
+      'params': {},
+      'isFlutterHomePage': false, // true false
+      'boundary': false, // true false
+      'isRootPage': true, // true false
+      'animated': false, // true false
+      'identifier': '' // 页面唯一id
+    };
+    addStackNode(node);
   }
 
   // 待发送节点队列
@@ -94,53 +92,11 @@ class DSpyNodeObserver extends DNodeObserver {
   @override
   void operationNode(Map node) {
     print('DSpyNodeObserver operationNode');
+
+    if (node['target'] == '/') {
+      // 上面已经手动添加，native再发送则不处理
+      return;
+    }
     this.addStackNode(node);
-  }
-}
-
-
-
-
-// 路由监听 准备废弃
-class DSpyNavigatorObserver extends NavigatorObserver {
-  static final DSpyNavigatorObserver _singleton =
-      DSpyNavigatorObserver._internal();
-
-  factory DSpyNavigatorObserver() => _singleton;
-
-  static DSpyNavigatorObserver get instance => _singleton;
-
-  DSpyNavigatorObserver._internal() {
-    print('DSpyNavigatorObserver instance');
-  }
-
-  @override
-  void didPush(Route route, Route previousRoute) {
-    super.didPush(route, previousRoute);
-    print('spy didPush ${route.settings.name}, previousRoute ${previousRoute?.settings?.name}');
-    // SpyScreenshot.readImage64(route.settings.name);
-
-    // Future.delayed(Duration(milliseconds: 1000), () {
-    //   DStackSpy.instance.channel
-    //       .sendScreenShotActionToNative({'target': route.settings.name});
-    // });
-  }
-
-  @override
-  void didReplace({Route newRoute, Route oldRoute}) {
-    super.didReplace(newRoute: newRoute, oldRoute: oldRoute);
-    print('spy didReplace ${newRoute.settings.name} oldRoute ${oldRoute?.settings?.name}');
-    // SpyScreenshot.readImage64(newRoute.settings.name);
-
-    // Future.delayed(Duration(milliseconds: 1000), () {
-    //   DStackSpy.instance.channel
-    //       .sendScreenShotActionToNative({'target': newRoute.settings.name});
-    // });
-  }
-
-  @override
-  void didPop(Route route, Route previousRoute) {
-    print('spy didPop ${route.settings.name}');
-    super.didPop(route, previousRoute);
   }
 }
