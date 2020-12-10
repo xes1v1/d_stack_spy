@@ -7,7 +7,7 @@
 
 #import "DStackSpyPlugin+Capture.h"
 
-#import <AssetsLibrary/AssetsLibrary.h>
+//#import <AssetsLibrary/AssetsLibrary.h>
 
 @implementation DStackSpyPlugin (Capture)
 
@@ -31,8 +31,9 @@
 {
     NSData *imageData = [self dataWithScreenshotInPNGFormat];
     
-    ALAssetsLibrary * library = [ALAssetsLibrary new];
-    [library writeImageDataToSavedPhotosAlbum:imageData metadata:nil completionBlock:nil];
+    // 截图后保存到相册，需要目标工程增加存相册权限
+//    ALAssetsLibrary * library = [ALAssetsLibrary new];
+//    [library writeImageDataToSavedPhotosAlbum:imageData metadata:nil completionBlock:nil];
     
     return [imageData base64EncodedStringWithOptions:NSDataBase64EncodingEndLineWithLineFeed];;
 }

@@ -16,17 +16,14 @@ import 'dart:convert' as convert;
 // spy节点监听
 class DSpyNodeObserver extends DNodeObserver {
 
-  int _milliseconds;
-  static DSpyNodeObserver _observer;
-  factory DSpyNodeObserver({int milliseconds = 1000}) {
-    if (_observer == null) {
-      _observer._milliseconds = milliseconds;
-      _observer = DSpyNodeObserver._internal(milliseconds);
-    }
-    return _observer;
-  }
 
-  DSpyNodeObserver._internal(int milliseconds) {
+  int milliseconds;
+
+  static final DSpyNodeObserver _singleton = DSpyNodeObserver._internal();
+  factory DSpyNodeObserver() => _singleton;
+  static DSpyNodeObserver get instance => _singleton;
+
+  DSpyNodeObserver._internal() {
     print('milliseconds= $milliseconds');
     DStackSpy();
     if (Platform.isIOS) {
@@ -58,10 +55,14 @@ class DSpyNodeObserver extends DNodeObserver {
     stackNode['data'] = node;
     _messageQueue.add(stackNode);
 
-    // Future.delayed(Duration(milliseconds: _milliseconds), () {
-    //   DStackSpy.instance.channel
-    //       .sendScreenShotActionToNative({'target': node['target']});
-    // });
+    String action = node['action'];
+    // 只有打开新页面才需要截图
+    if (action == 'push' || action == 'present' || action == 'replace') {
+      Future.delayed(Duration(milliseconds: milliseconds), () {
+        DStackSpy.instance.channel
+            .sendScreenShotActionToNative({'target': node['target']});
+      });
+    }
   }
 
   // 队列中添加截图数据

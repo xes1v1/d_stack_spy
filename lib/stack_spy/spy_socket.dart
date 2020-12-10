@@ -24,6 +24,7 @@ class SpySocket {
     socket = _socket;
     print('spy initSocket done');
 
+    // 需要给前端页面预留启动时间
     Future.delayed(Duration(milliseconds: 3000), () {
 
       Timer.periodic(Duration(milliseconds: 300), (timer) {
