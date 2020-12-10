@@ -3,10 +3,16 @@ package com.tal.d_stack_spy
 import android.app.Activity
 import android.app.Application
 import android.app.Application.ActivityLifecycleCallbacks
+import android.content.Intent
+import android.graphics.Bitmap
 import android.os.Bundle
 import android.text.TextUtils
 import android.util.Log
 import androidx.annotation.NonNull
+import androidx.core.content.ContextCompat.startActivity
+import com.yorhp.recordlibrary.OnScreenShotListener
+import com.yorhp.recordlibrary.ScreenRecordUtil
+import com.yorhp.recordlibrary.ScreenShotUtil
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
@@ -59,6 +65,7 @@ class DStackSpyPlugin : FlutterPlugin, MethodCallHandler {
         } else if (call.method == "spySendScreenShotActionToNative") {
             val arguments = call.arguments as Map<*, *>
             handleSpySendScreenShotActionToNative(arguments)
+
         } else {
             result.notImplemented()
         }
@@ -72,14 +79,20 @@ class DStackSpyPlugin : FlutterPlugin, MethodCallHandler {
         if (TextUtils.isEmpty(target)) {
             return
         }
-        var img = SnapShotUtils.getImgBase64(activity)
-        if (TextUtils.isEmpty(img)) {
-            img = ""
-        } else {
-            img = "data:image/png;base64,$img"
-        }
-        spyReceiveScreenShotFromNative(target, img)
 
+        SnapShotUtils.getImgBase64(activity, object : OnScreenShotListener {
+            override fun screenShot() {
+                val bitmap: Bitmap = ScreenShotUtil.getInstance().screenShot
+                ScreenShotUtil.getInstance().destroy()
+                var imgBase64 = SnapShotUtils.getImgBase64(bitmap)
+                if (TextUtils.isEmpty(imgBase64)) {
+                    imgBase64 = ""
+                } else {
+                    imgBase64 = "data:image/png;base64,$imgBase64"
+                }
+                spyReceiveScreenShotFromNative(target, imgBase64)
+            }
+        })
     }
 
     private fun spyReceiveScreenShotFromNative(target: String, img: String) {

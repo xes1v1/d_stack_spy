@@ -4,25 +4,19 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
-import android.text.TextUtils;
 import android.util.Base64;
 import android.util.DisplayMetrics;
 import android.view.View;
+
+import com.yorhp.recordlibrary.OnScreenShotListener;
+import com.yorhp.recordlibrary.ScreenShotUtil;
 
 import java.io.ByteArrayOutputStream;
 
 public class SnapShotUtils {
 
-    public static String getImgBase64(Activity act) {
-        Bitmap scrBmp = takeScreenShot(act);
-        if (scrBmp == null) {
-            return "";
-        }
-        String imgBase64 = getImgBase64(scrBmp);
-        if (TextUtils.isEmpty(imgBase64)) {
-            return "";
-        }
-        return imgBase64;
+    public static void getImgBase64(Activity activity, OnScreenShotListener onScreenShotListener) {
+        ScreenShotUtil.getInstance().screenShot(activity, onScreenShotListener);
     }
 
     public static Bitmap takeScreenShot(Activity activity) {
