@@ -25,6 +25,8 @@ class DStackSpy {
   SpySocket get socket => _socket;
   static SpySocket _socket = SpySocket();
 
+  int milliseconds = 1000;
+
   DStackSpy._internal() {
     print('DStackSpy instance');
     final MethodChannel _methodChannel = MethodChannel("d_stack_spy");

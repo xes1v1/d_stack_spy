@@ -17,7 +17,12 @@ import 'dart:convert' as convert;
 class DSpyNodeObserver extends DNodeObserver {
 
 
-  int milliseconds;
+  // 支持对单个页面特殊设置延迟时间
+  // 使用方式 DSpyNodeObserver().milliseconds(2000);
+  // 特殊设置后，需要自行恢复，仍调用此方法
+  void milliseconds(int milliseconds) {
+    DStackSpy.instance.milliseconds = milliseconds;
+  }
 
   static final DSpyNodeObserver _singleton = DSpyNodeObserver._internal();
   factory DSpyNodeObserver() => _singleton;
@@ -58,7 +63,7 @@ class DSpyNodeObserver extends DNodeObserver {
     String action = node['action'];
     // 只有打开新页面才需要截图
     if (action == 'push' || action == 'present' || action == 'replace') {
-      Future.delayed(Duration(milliseconds: milliseconds), () {
+      Future.delayed(Duration(milliseconds: DStackSpy.instance.milliseconds), () {
         DStackSpy.instance.channel
             .sendScreenShotActionToNative({'target': node['target']});
       });
