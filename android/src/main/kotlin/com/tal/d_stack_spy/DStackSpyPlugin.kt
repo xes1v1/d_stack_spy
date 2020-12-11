@@ -13,6 +13,7 @@ import androidx.core.content.ContextCompat.startActivity
 import com.yorhp.recordlibrary.OnScreenShotListener
 import com.yorhp.recordlibrary.ScreenRecordUtil
 import com.yorhp.recordlibrary.ScreenShotUtil
+import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
@@ -65,7 +66,6 @@ class DStackSpyPlugin : FlutterPlugin, MethodCallHandler {
         } else if (call.method == "spySendScreenShotActionToNative") {
             val arguments = call.arguments as Map<*, *>
             handleSpySendScreenShotActionToNative(arguments)
-
         } else {
             result.notImplemented()
         }
@@ -79,20 +79,30 @@ class DStackSpyPlugin : FlutterPlugin, MethodCallHandler {
         if (TextUtils.isEmpty(target)) {
             return
         }
-
-        SnapShotUtils.getImgBase64(activity, object : OnScreenShotListener {
-            override fun screenShot() {
-                val bitmap: Bitmap = ScreenShotUtil.getInstance().screenShot
-                ScreenShotUtil.getInstance().destroy()
-                var imgBase64 = SnapShotUtils.getImgBase64(bitmap)
-                if (TextUtils.isEmpty(imgBase64)) {
-                    imgBase64 = ""
-                } else {
-                    imgBase64 = "data:image/png;base64,$imgBase64"
+        if (activity is FlutterActivity || activity.parent is FlutterActivity) {
+            SnapShotUtils.getImgBase64(activity, object : OnScreenShotListener {
+                override fun screenShot() {
+                    val bitmap: Bitmap = ScreenShotUtil.getInstance().screenShot
+                    ScreenShotUtil.getInstance().destroy()
+                    var imgBase64 = SnapShotUtils.getImgBase64(bitmap)
+                    if (TextUtils.isEmpty(imgBase64)) {
+                        imgBase64 = ""
+                    } else {
+                        imgBase64 = "data:image/png;base64,$imgBase64"
+                    }
+                    spyReceiveScreenShotFromNative(target, imgBase64)
                 }
-                spyReceiveScreenShotFromNative(target, imgBase64)
+            })
+        } else {
+            val bitmap: Bitmap = SnapShotUtils.takeScreenShot(activity)
+            var imgBase64: String = SnapShotUtils.getImgBase64(bitmap)
+            if (TextUtils.isEmpty(imgBase64)) {
+                imgBase64 = ""
+            } else {
+                imgBase64 = "data:image/png;base64,$imgBase64"
             }
-        })
+            spyReceiveScreenShotFromNative(target, imgBase64)
+        }
     }
 
     private fun spyReceiveScreenShotFromNative(target: String, img: String) {

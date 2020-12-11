@@ -36,6 +36,9 @@ public class SnapShotUtils {
     }
 
     public static String getImgBase64(Bitmap scrBmp) {
+        if (scrBmp == null) {
+            return "";
+        }
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         scrBmp.compress(Bitmap.CompressFormat.PNG, 100, bos);
         byte[] bb = bos.toByteArray();
