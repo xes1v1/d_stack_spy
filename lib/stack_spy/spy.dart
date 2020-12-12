@@ -25,6 +25,7 @@ class DStackSpy {
   SpySocket get socket => _socket;
   static SpySocket _socket = SpySocket();
 
+  String ipAndPort;
   int milliseconds = 1000;
 
   DStackSpy._internal() {

@@ -21,6 +21,10 @@ class DSpyNodeObserver extends DNodeObserver {
     DStackSpy.instance.milliseconds = milliseconds;
   }
 
+  void ipAndPort(String ipAndPort) {
+    DStackSpy.instance.ipAndPort = ipAndPort;
+  }
+
   static final DSpyNodeObserver _singleton = DSpyNodeObserver._internal();
   factory DSpyNodeObserver() => _singleton;
   static DSpyNodeObserver get instance => _singleton;

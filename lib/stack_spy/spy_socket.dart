@@ -20,7 +20,7 @@ class SpySocket {
     // ws://10.29.13.38:4041/ws
     print('spy initSocket');
 
-    WebSocket _socket = await WebSocket.connect('ws://10.29.118.14:4041/ws');
+    WebSocket _socket = await WebSocket.connect('ws://${DStackSpy.instance.ipAndPort}/ws');
     socket = _socket;
     print('spy initSocket done');
 
