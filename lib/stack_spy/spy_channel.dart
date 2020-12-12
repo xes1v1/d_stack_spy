@@ -7,7 +7,7 @@
  */
 
 import 'dart:async';
-import 'package:d_stack_spy/d_stack_spy.dart';
+import 'package:d_stack_spy/stack_spy/spy.dart';
 import 'package:flutter/services.dart';
 
 const String SpySendScreenShotActionToNative = 'spySendScreenShotActionToNative';
@@ -24,7 +24,7 @@ class DChannel {
           'setMethodCallHandler method ${call.method}');
       if (SpyReceiveScreenShotFromNative == call.method) {
         // 接受到截图信息发给socket处理
-        DSpyNodeObserver().addScreenshotNode(call.arguments);
+        DStackSpy.instance.nodeObserver.addScreenshotNode(call.arguments);
       }
       return Future.value();
     });

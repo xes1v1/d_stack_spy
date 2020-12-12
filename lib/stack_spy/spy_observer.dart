@@ -17,22 +17,22 @@ class DSpyNodeObserver extends DNodeObserver {
   // 支持对单个页面特殊设置延迟时间
   // 使用方式 DSpyNodeObserver().milliseconds(2000);
   // 特殊设置后，需要自行恢复，仍调用此方法
-  void milliseconds(int milliseconds) {
+
+  int milliseconds;
+  final String ipAndPort;
+
+  DSpyNodeObserver(this.ipAndPort, {this.milliseconds = 1000}) {
     DStackSpy.instance.milliseconds = milliseconds;
+    if (DStackSpy.instance.nodeObserver == null) {
+      print('DStackSpy init done');
+      initNodeObserver();
+      DStackSpy.instance.nodeObserver = this;
+      DStackSpy.instance.ipAndPort(ipAndPort);
+    }
   }
 
-  void ipAndPort(String ipAndPort) {
-    DStackSpy.instance.ipAndPort = ipAndPort;
-  }
-
-  static final DSpyNodeObserver _singleton = DSpyNodeObserver._internal();
-  factory DSpyNodeObserver() => _singleton;
-  static DSpyNodeObserver get instance => _singleton;
-
-  DSpyNodeObserver._internal() {
-    print('milliseconds= $milliseconds');
-    // 初始化DStackSpy
-    DStackSpy();
+  void initNodeObserver() {
+    print('milliseconds= ${DStackSpy.instance.milliseconds}');
     // 将根节点主动加到队列中
     // 因为native发送根节点可能在engine启动之前，这时候DNodeObserver队列收不到消息
     Map node = {

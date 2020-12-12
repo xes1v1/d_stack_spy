@@ -10,17 +10,16 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:d_stack_spy/stack_spy/spy.dart';
-import 'package:d_stack_spy/stack_spy/spy_observer.dart';
 
 class SpySocket {
   WebSocket socket;
 
-  Future<WebSocket> initSocket() async {
+  Future<WebSocket> initSocket(String ipAndPort) async {
     // Dart client
     // ws://10.29.13.38:4041/ws
     print('spy initSocket');
 
-    WebSocket _socket = await WebSocket.connect('ws://${DStackSpy.instance.ipAndPort}/ws');
+    WebSocket _socket = await WebSocket.connect('ws://$ipAndPort/ws');
     socket = _socket;
     print('spy initSocket done');
 
@@ -28,7 +27,7 @@ class SpySocket {
     Future.delayed(Duration(milliseconds: 3000), () {
 
       Timer.periodic(Duration(milliseconds: 300), (timer) {
-        var sentStr =  DSpyNodeObserver().firstNodeString();
+        var sentStr =  DStackSpy.instance.nodeObserver.firstNodeString();
         if (sentStr != null) {
           print('sentSocket');
           sentNodeToServer(sentStr);

@@ -8,6 +8,8 @@
 
 import 'dart:async';
 
+import 'package:d_stack_spy/d_stack_spy.dart';
+
 import 'spy_channel.dart';
 import 'package:flutter/services.dart';
 import 'spy_socket.dart';
@@ -22,17 +24,17 @@ class DStackSpy {
   DChannel get channel => _stackChannel;
   static DChannel _stackChannel;
 
-  SpySocket get socket => _socket;
-  static SpySocket _socket = SpySocket();
+  void ipAndPort(String ipAndPort) {
+    SpySocket().initSocket(ipAndPort);
+  }
 
-  String ipAndPort;
-  int milliseconds = 1000;
+  int milliseconds;
+  DSpyNodeObserver nodeObserver;
 
   DStackSpy._internal() {
     print('DStackSpy instance');
     final MethodChannel _methodChannel = MethodChannel("d_stack_spy");
     _stackChannel = DChannel(_methodChannel);
-    _socket.initSocket();
   }
 
   static Future<String> get platformVersion async {
