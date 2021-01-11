@@ -13,11 +13,6 @@ import 'dart:convert' as convert;
 // spy节点监听
 class DSpyNodeObserver extends DNodeObserver {
 
-
-  // 支持对单个页面特殊设置延迟时间
-  // 使用方式 DSpyNodeObserver().milliseconds(2000);
-  // 特殊设置后，需要自行恢复，仍调用此方法
-
   int milliseconds;
   final String ipAndPort;
 
@@ -59,6 +54,17 @@ class DSpyNodeObserver extends DNodeObserver {
     Map stackNode = {};
     stackNode['socketClient'] = 'app';
     stackNode['messageType'] = 'node'; // node、screenshot 消息类型
+    // 兼容处理
+    if (node['action'] == 'present') {
+      node['action'] = 'push';
+    }
+    if (node['action'] == 'dismiss' || node['action'] == 'gesture' || node['action'] == 'didPop') {
+      node['action'] = 'pop';
+    }
+    if (node['action'] == 'popToNativeRoot') {
+      node['action'] = 'popToRoot';
+    }
+
     stackNode['data'] = node;
     _messageQueue.add(stackNode);
 
@@ -74,7 +80,7 @@ class DSpyNodeObserver extends DNodeObserver {
 
   // 队列中添加截图数据
   void addScreenshotNode(Map node) {
-    print('addScreenshotNode $node');
+    print('addScreenshotNode ${node['target']}');
     Map screenshotNode = {};
     screenshotNode['socketClient'] = 'app';
     screenshotNode['messageType'] = 'screenshot';
