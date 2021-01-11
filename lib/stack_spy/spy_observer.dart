@@ -15,6 +15,11 @@ class DSpyNodeObserver extends DNodeObserver {
 
   int milliseconds;
   final String ipAndPort;
+   // 配置示例
+   // DStack.instance.register(
+   //       builders: RouterBuilder.builders(),
+   //       observer: MyLifeCycleObserver(),
+   //       nodeObserver: DSpyNodeObserver('10.75.44.5:9023'));
 
   DSpyNodeObserver(this.ipAndPort, {this.milliseconds = 1000}) {
     DStackSpy.instance.milliseconds = milliseconds;
