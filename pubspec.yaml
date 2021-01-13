@@ -12,8 +12,8 @@ dependencies:
   flutter:
     sdk: flutter
 
-  d_stack:
-    path: ../d_stack/
+  d_stack: ^1.3.0
+
 
 dev_dependencies:
   flutter_test:
